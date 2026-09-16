@@ -402,13 +402,72 @@ The model is a working prototype, not a production system. Known limits:
 | Single-channel input                  | No multi-mic beamforming                                  |
 
 ---
+## V2 Improvements Over V1
 
-## 🔮 Future Work
+V2 introduces a more advanced **complex-domain U-Net** architecture compared with the magnitude-only U-Net used in V1.
 
-- **More training.** Extend from 20 to 60+ epochs for higher SI-SNR.
-- **Bigger model.** Try `base=24` or `base=32` for +1–2 dB at 2–3× compute.
-- **Phase correction.** Add a small phase-correction head or move to complex masking.
-- **Stateful streaming.** Retrain on shorter windows (e.g., 20–50 ms) with an LSTM or causal dilated convolutions for sub-30 ms latency.
-- **Quantization.** INT8 quantization for a 4× smaller model and faster inference on edge hardware.
-- **Fine-tune on live data.** Record room tone + live speech, add as new noise class, fine-tune for in-domain robustness.
-- **Hardware integration.** Port to an edge device that can handle ml compute, for instance, rasberry pi.
+### Model Improvements
+
+- Increased U-Net base channels from **16 → 24** for greater model capacity.
+- Predicts a **complex-valued mask** instead of only a magnitude mask.
+- Processes both **real and imaginary components** of the STFT.
+- Enhances the complete complex spectrum before reconstruction instead of directly reusing the noisy phase.
+- Uses a larger model to better handle complex and non-stationary military noise.
+
+### Training Improvements
+
+V2 uses a more comprehensive training objective:
+
+- Complex spectral loss
+- Magnitude loss
+- Log-magnitude loss
+- Waveform-domain L1 loss
+- Differentiable SI-SNR loss
+- AdamW optimizer
+- Weight decay
+- Random clean-speech gain augmentation
+- Automatic Mixed Precision (AMP) for faster GPU training
+
+### V1 vs V2
+
+| Feature | V1 | V2 |
+|---|---|---|
+| U-Net Base Channels | 16 | **24** |
+| Spectral Representation | Magnitude only | **Complex (Real + Imaginary)** |
+| Mask | Magnitude mask | **Complex mask** |
+| Phase | Reuses noisy phase | **Modified through complex masking** |
+| Loss | Mainly L1 magnitude loss | **Multi-component spectral + waveform + SI-SNR losses** |
+| Optimizer | Adam | **AdamW** |
+| Augmentation | Basic | **Clean-speech gain augmentation** |
+| GPU Training | Basic | **AMP optimized** |
+
+### Performance Comparison
+
+Independent evaluation on the **207 test speech files**:
+
+| Model | Noisy SI-SNR | Enhanced SI-SNR | SI-SNR Improvement |
+|---|---:|---:|---:|
+| V1 | 4.94 dB | 5.83 dB | +0.89 dB |
+| **V2** | 4.65 dB | **6.27 dB** | **+1.62 dB** |
+
+V2 achieved a **+1.62 dB SI-SNR improvement** on the test set, compared with **+0.89 dB for V1**.
+
+### Architecture Upgrade
+
+```text
+V1:
+Noisy Audio
+    ↓
+STFT
+    ↓
+Magnitude
+    ↓
+U-Net
+    ↓
+Magnitude Mask
+    ↓
+Noisy Phase
+    ↓
+iSTFT
+    ↓
+Enhanced Audio
