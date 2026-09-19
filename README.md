@@ -14,6 +14,7 @@ Real-time AI noise cancellation system to isolate human speech commands from hea
 - [Model Details](#-model-details)
 - [Working Pipeline](#-working-pipeline)
 - [Results & Limitations](#-results)
+- [Improved Model V2](#-v2-improvements-over-v1)
 ---
 
 ## 📖 Problem Statement
@@ -398,7 +399,7 @@ The model is a working prototype, not a production system. Known limits:
 | Single-channel input                  | No multi-mic beamforming                                  |
 
 ---
-## V2 Improvements Over V1
+# V2 Improvements Over V1
 
 V2 introduces a more advanced **complex-domain U-Net** architecture compared with the magnitude-only U-Net used in V1.
 
