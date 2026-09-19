@@ -13,11 +13,7 @@ Real-time AI noise cancellation system to isolate human speech commands from hea
 - [Requirements](#-requirements)
 - [Model Details](#-model-details)
 - [Working Pipeline](#-working-pipeline)
-- [Results](#-results)
-- [Live Streaming Demo](#-live-streaming-demo)
-
-
-
+- [Results & Limitations](#-results)
 ---
 
 ## 📖 Problem Statement
