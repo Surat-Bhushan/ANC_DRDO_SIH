@@ -2,6 +2,9 @@
 
 Real-time AI noise cancellation system to isolate human speech commands from heavy non-stationary battlefield noise (gunfire, artillery, vehicles) for tactical military communications.
 
+> [!NOTE]
+> 'MAD_ANC_V1_Backup' folder is the initial fully functioning prototype. 'MAD_ANC_V2_backup' is the improved version. 
+
 ---
 
 ## Table of Contents
